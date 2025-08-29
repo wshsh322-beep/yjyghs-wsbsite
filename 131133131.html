@@ -1,0 +1,48 @@
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
+fig, ax = plt.subplots()
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 6)
+ax.set_aspect('equal')
+
+# 졸라맨 몸을 구성하는 선분들
+head = plt.Circle((0, 0), 0.3, fill=False)
+body, left_arm, right_arm, left_leg, right_leg = [ax.plot([], [], 'k')[0] for _ in range(5)]
+
+ax.add_patch(head)
+
+def init():
+    head.center = (1, 4)
+    body.set_data([], [])
+    left_arm.set_data([], [])
+    right_arm.set_data([], [])
+    left_leg.set_data([], [])
+    right_leg.set_data([], [])
+    return head, body, left_arm, right_arm, left_leg, right_leg
+
+def update(frame):
+    # 걷는 느낌을 주기 위한 간단한 움직임
+    x = 1 + 0.05 * frame
+    swing = 0.2 * (-1) ** (frame // 5)
+
+    # 머리 위치
+    head.center = (x, 4)
+
+    # 몸통
+    body.set_data([x, x], [3.2, 4])
+
+    # 팔
+    left_arm.set_data([x - 0.5 + swing, x], [3.5, 3.8])
+    right_arm.set_data([x + 0.5 - swing, x], [3.5, 3.8])
+
+    # 다리
+    left_leg.set_data([x - 0.3 + swing, x], [3, 3.2])
+    right_leg.set_data([x + 0.3 - swing, x], [3, 3.2])
+
+    return head, body, left_arm, right_arm, left_leg, right_leg
+
+ani = animation.FuncAnimation(fig, update, init_func=init, frames=100,
+                              interval=100, blit=True)
+
+plt.show()
